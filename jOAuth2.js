@@ -162,7 +162,7 @@
     
     // Check the validity by expires-in
     if (typeof token.expires_in != 'undefined') {
-      if (Date.now () < token.expires_in + token.issued_at)
+      if (Date.now () < (parseInt (token.expires_in) * 1000) + token.issued_at)
         return true;
     
     // Check the validity by introspection
