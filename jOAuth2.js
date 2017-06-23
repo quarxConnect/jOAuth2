@@ -92,7 +92,7 @@
       var p;
       
       // Clear the hash
-      window.location.hash = '';
+      history.pushState ('', document.title, window.location.pathname + window.location.search);
       
       // Parse contents of hash
       for (var i = 0; i < hash.length; i++)
