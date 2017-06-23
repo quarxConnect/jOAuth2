@@ -131,14 +131,24 @@
     if (this.options.client_id == null)
       throw 'Missing client-id for authorization';
     
+    // Generate redirect-uri
+    var uri = this.options.redirect_uri;
+    
+    if (!uri) {
+      uri = window.location.href;
+      
+      if (uri.indexOf ('#') >= 0)
+        uri = uri.substring (0, uri.indexOf ('#'));
+    }
+    
     // Redirect to authorization-endpoint
-    // TODO: This should be POST
+    // TODO: This should be POST?
     window.location.href = addurlp (
       this.options.authorization_endpoint,
       {
         response_type : 'token',
         client_id : this.options.client_id,
-        redirect_uri : this.options.redirect_uri || window.location.href,
+        redirect_uri : uri,
         scope : this.options.scope,
         state : this.options.storage_id
       }
