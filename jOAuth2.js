@@ -102,7 +102,7 @@
       // Parse contents of hash
       for (var i = 0; i < hash.length; i++)
         if ((p = hash [i].indexOf ('=')) > 0)
-          params [unescape (hash [i].substring (0, p))] = unescape (hash [i].substring (p + 1));
+          params [decodeURIComponent (hash [i].substring (0, p).replace (/\+/, '%20'))] = decodeURIComponent (hash [i].substring (p + 1).replace (/\+/, '%20'));
       
       // Check for a valid token
       if ((typeof params.access_token != 'undefined') &&
