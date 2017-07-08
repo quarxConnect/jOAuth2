@@ -46,7 +46,11 @@
       redirect_uri : null,
       scope : null,
       storage : window.sessionStorage,
-      storage_id : 'default'
+      storage_id : 'default',
+      
+      onbeforeauthorize : null,
+      onauthorize : null,
+      onerror : null
     };
     
     // Merge external options
@@ -86,7 +90,8 @@
   self.jOAuth2.prototype.authorize = function () {
     // Check if we just received a response
     if ((window.location.hash.length > 1) &&
-        (window.location.hash.indexOf ('access_token=') > 0)) {
+        ((window.location.hash.indexOf ('access_token=') > 0) ||
+         (window.location.hash.indexOf ('error') > 0))) {
       var hash = window.location.hash.substring (1).split ('&');
       var params = { };
       var p;
@@ -99,7 +104,7 @@
         if ((p = hash [i].indexOf ('=')) > 0)
           params [unescape (hash [i].substring (0, p))] = unescape (hash [i].substring (p + 1));
       
-      // Validate contents
+      // Check for a valid token
       if ((typeof params.access_token != 'undefined') &&
           (typeof params.token_type != 'undefined') &&
           (typeof params.state != 'undefined') &&
@@ -112,7 +117,22 @@
         this.token = params;
         this.options.storage.setItem ('jOAuth2-Token-' + this.options.storage_id, JSON.stringify (this.token));
         
+        // Run authorize-callback
+        if (this.options.onauthorize)
+          this.options.onauthorize.apply (this, [ params ]);
+        
         return true;
+      }
+      
+      // Check for an error
+      if ((typeof params.error != 'undefined') &&
+          (typeof params.state != 'undefined') &&
+          (params.state == this.options.storage_id)) {
+        // Run error-callback
+        if (this.options.onerror)
+          this.options.onerror.apply (this, [ params.error, params ]);
+        
+        return false;
       }
       
       // Bail out some kind of error here
@@ -141,6 +161,10 @@
         uri = uri.substring (0, uri.indexOf ('#'));
     }
     
+    // Run early callback
+    if (this.options.onbeforeauthorize && (this.options.onbeforeauthorize.apply (this, [ ]) === false))
+      return false;
+    
     // Redirect to authorization-endpoint
     // TODO: This should be POST?
     window.location.href = addurlp (
@@ -153,6 +177,8 @@
         state : this.options.storage_id
       }
     );
+    
+    return false;
   };
   // }}}
   

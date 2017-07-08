@@ -10,7 +10,10 @@ Simple Javascript-Library to maintain OAuth2 implicit Grants
     authorization_endpoint : 'https://url-of-authz-endpoint/',
   });
   
-  authz.authorize ();
+  if (authz.authorize ()) {
+    /* ... */
+  }
+
 </script>
 ~~~
 
