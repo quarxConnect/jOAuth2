@@ -24,9 +24,11 @@ external API-Call by using the `expires_in`-attribute from the original
 grant. If `expires_in` is unavailable for any reason it may use
 Token-Introspection (RFC 7662) to check the validity of an
 access-token.
+Whenever the access-token is not needed anymore it may be removed and
+revoked (RFC 7009) using `deauthorize()`.
 
 ## Copyright & License
-Copyright (C) 2017 Bernd Holzmüller
+Copyright (C) 2017-2018 Bernd Holzmüller
 
 Licensed under the MIT License. This is free software: you are free to
 change and redistribute it. There is NO WARRANTY, to the extent

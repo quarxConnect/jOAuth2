@@ -39,6 +39,7 @@
     // Initialize all properties
     this.options = {
       authorization_endpoint : null,
+      revocation_endpoint : null,
       introspection_endpoint : null,
       introspection_method : 'rfc',
       token_endpoint : null,
@@ -235,6 +236,31 @@
     // Redirect to authorization-endpoint
     // TODO: This should be POST?
     window.location.href = addurlp (this.options.authorization_endpoint, params);
+  };
+  // }}}
+  
+  // {{{ deauthorize
+  /**
+   * Remove our local authorization-credentials and try to revoke them at the IdP
+   * 
+   * @access public
+   * @return void
+   **/
+  self.jOAuth2.prototype.deauthorize = function () {
+    // Revoke credentials if possible
+    if (this.options.revocation_endpoint) {
+      var xhr = new XMLHttpRequest (),
+          token = this.getToken ();
+      
+      xhr.open ('post', this.options.revocation_endpoint);
+      xhr.setRequestHeader ('Content-Type', 'application/x-www-form-urlencoded');
+    
+      xhr.send ('token=' + escape (token.access_token) + '&token_type=' + escape (token.token_type) + '&client_id=' + escape (this.options.client_id));
+    }
+    
+    // Remove locally stored credentials
+    this.token = null;
+    this.options.storage.removeItem ('jOAuth2-Token-' + this.options.storage_id);
   };
   // }}}
   
