@@ -219,9 +219,11 @@
       response_type : 'token',
       client_id : this.options.client_id,
       redirect_uri : uri,
-      scope : (this.options.scopes ? this.options.scopes.join (' ') : ''),
       state : this.options.storage_id
     };
+    
+    if (this.options.scopes)
+      params.scope = this.options.scopes.join (' ');
     
     if (token) {
       params.last_token = token.access_token;
