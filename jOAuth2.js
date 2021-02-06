@@ -356,4 +356,24 @@
       xhr.setRequestHeader (p, h [p]);
   };
   // }}}
+  
+  // {{{ patchRequest
+  /**
+   * Prepare a fetch-API-request to be used with our authorization
+   * 
+   * @param request
+   * 
+   * @access public
+   * @return void
+   **/
+  self.jOAuth2.prototype.patchRequest = function (request) {
+    let h = this.getAuthorizationHeaders ();
+    
+    if (request.url.substring (0, window.location.origin.length + 1) != window.location.origin  + '/')
+      return;
+    
+    for (let p in h)
+      request.headers.append (p, h [p]);
+  };
+  // }}}
 })();
